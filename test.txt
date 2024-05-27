@@ -1,0 +1,3 @@
+    In Apex Legends, players in squads of two or three select a character with pre-set abilities, referred to as a Legend, and battle against other 
+players to be the last squad standing. Players earn experience based on their performance in matches, through which they can earn Apex Packs 
+that contain cosmetic items.
