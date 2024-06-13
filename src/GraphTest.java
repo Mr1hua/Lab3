@@ -1,10 +1,7 @@
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 class GraphTest {
     Graph my_graph = new Graph();
     File file = new File("test.txt");
