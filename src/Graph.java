@@ -140,7 +140,7 @@ public class Graph {
 
 
 
-    public  String generateNewText(String inputText) {
+    public String generateNewText(String inputText) {
         // 根据bridge word生成新文本的代码
         String res = "";
         String bridgewords;
@@ -148,7 +148,6 @@ public class Graph {
         String last_word = "\0";
         String current_word;
         int i = 0;
-        //SecureRandom random = new SecureRandom();
         while (i < words.length) {
             current_word = words[i];
             current_word = current_word.toLowerCase();
@@ -157,6 +156,7 @@ public class Graph {
                 last_word = current_word;
             } else {
                 bridgewords = queryBridgeWords(last_word, current_word);
+
                 if (bridgewords == null || bridgewords.isEmpty()) {
                     res += last_word+" ";
                 } else {
@@ -172,10 +172,34 @@ public class Graph {
         return res;
     }
 
-    public  String calcShortestPath(String word1, String word2) {
-        // 计算两个单词之间的最短路径的代码
+    public String calcShortestPath(String word1, String word2) {
         Map<String, String> predecessors = new HashMap<>();
-        int distance = dijkstra(word1, word2, predecessors);
+        Map<String, Integer> distances = new HashMap<>();
+        Set<String> visited = new HashSet<>();
+        distances.put(word1, 0);
+        while (!visited.contains(word2)) {
+            String current = null;
+            int currentMinDistance = Integer.MAX_VALUE;
+            for (String node : graph.keySet()) {
+                if (!visited.contains(node) && distances.getOrDefault(node, Integer.MAX_VALUE) < currentMinDistance) {// 选择当前最小距离的节点
+                    current = node;
+                    currentMinDistance = distances.get(node);
+                }
+            }
+            if (current == null) { break;} // 没有找到从start到end的路径
+            visited.add(current);
+            if (current.equals(word2)) {break;} // 找到最短路径
+            for (Map.Entry<String, Integer> entry : graph.get(current).entrySet()) {
+                String neighbor = entry.getKey();
+                int edgeWeight = entry.getValue();
+                int newDistance = currentMinDistance + edgeWeight;
+                if (newDistance < distances.getOrDefault(neighbor, Integer.MAX_VALUE)) {
+                    distances.put(neighbor, newDistance);
+                    predecessors.put(neighbor, current);
+                }
+            }
+        }
+        int distance = distances.getOrDefault(word2, Integer.MAX_VALUE);
         String res = "";
         if (distance != Integer.MAX_VALUE) {
             List<String> path = new ArrayList<>();
@@ -191,52 +215,8 @@ public class Graph {
         return res;
     }
 
-    private static int dijkstra(String start, String end, Map<String, String> predecessors) {
-        Map<String, Integer> distances = new HashMap<>();
-        Set<String> visited = new HashSet<>();
-        distances.put(start, 0);
-
-        while (!visited.contains(end)) {
-            String current = null;
-            int currentMinDistance = Integer.MAX_VALUE;
-
-            // 选择当前最小距离的节点
-            for (String node : graph.keySet()) {
-                if (!visited.contains(node) && distances.getOrDefault(node, Integer.MAX_VALUE) < currentMinDistance) {
-                    current = node;
-                    currentMinDistance = distances.get(node);
-                }
-
-            }
-            if (current == null) {
-                break; // 没有找到从start到end的路径
-            }
-
-            visited.add(current);
-
-            if (current.equals(end)) {
-                break; // 找到最短路径
-            }
-
-            for (Map.Entry<String, Integer> entry : graph.get(current).entrySet()) {
-                String neighbor = entry.getKey();
-                int edgeWeight = entry.getValue();
-                int newDistance = currentMinDistance + edgeWeight;
-
-                if (newDistance < distances.getOrDefault(neighbor, Integer.MAX_VALUE)) {
-                    distances.put(neighbor, newDistance);
-                    predecessors.put(neighbor, current);
-                }
-            }
-        }
-
-        return distances.getOrDefault(end, Integer.MAX_VALUE);
-    }
-
-
     public String randomWalk() {
         // 随机游走的代码
-        //Random random = new Random();
         int size = graph.size();
         int random_num = random.nextInt(size);
         String res = "";
