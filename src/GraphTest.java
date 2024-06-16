@@ -25,6 +25,8 @@ class GraphTest {
         assertNull(res);
         res = my_graph.queryBridgeWords("ad","wd");
         assertNull(res);
+        res = my_graph.queryBridgeWords("in","in");
+        assertEquals(res,"");
     }
     @Test
     void queryBridgeWords_word1normal_and_word2null(){
